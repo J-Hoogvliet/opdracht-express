@@ -1,37 +1,31 @@
 import Champion from "../Schemas/ChampionSchema.js";
-import {faker} from "@faker-js/faker"
-import express from "express";
+import {faker, tr} from "@faker-js/faker"
+import express, {json} from "express";
 
 const router = express.Router();
 
-router.use(express.json());
-router.use(express.urlencoded({extended: true}));
 
 router.get('/', async (req, res) => {
     try {
-        const champions = await Champion.find({}); // velden opzoeken
-        res.json(champions);
+        const champions = await Champion.find({}, 'year name id');
+        const championCollections = {
+            "items": champions,
+            "_links": {
+                "self": {
+                    "href": process.env.BASE_URL + "/champions"
+                },
+                "collection": {
+                    "href": process.env.BASE_URL + "/champions"
+                },
+            }
+        }
+        res.status(200).json(championCollections);
     } catch (error) {
-        res.json({error: error.message});
+        res.status(500).json({error: error.message});
     }
 });
 
 router.post('/', async (req, res) => {
-    try {
-
-    } catch (error) {
-
-    }
-});
-
-router.options('/', async (req, res) => {
-    res.setHeader('Allow', 'GET, POST');
-    res.header('Access-Control-Allow-Methods', 'GET, POST');
-
-    res.send();
-});
-
-router.post('/seed', async (req, res)=>{
     const f1ChampionsDetailed = [
         {
             year: 1950,
@@ -39,7 +33,7 @@ router.post('/seed', async (req, res)=>{
             age: 44,
             chassis: "Alfa Romeo 158",
             motor: "Alfa Romeo",
-            constructor: "Alfa Romeo",
+            team: "Alfa Romeo",
             tyres: "Pirelli",
             poles: 3,
             wins: 3,
@@ -55,7 +49,7 @@ router.post('/seed', async (req, res)=>{
             age: 40,
             chassis: "Alfa Romeo 159",
             motor: "Alfa Romeo",
-            constructor: "Alfa Romeo",
+            team: "Alfa Romeo",
             tyres: "Pirelli",
             poles: 4,
             wins: 3,
@@ -71,7 +65,7 @@ router.post('/seed', async (req, res)=>{
             age: 34,
             chassis: "Ferrari 500",
             motor: "Ferrari",
-            constructor: "Ferrari",
+            team: "Ferrari",
             tyres: "Pirelli",
             poles: 5,
             wins: 6,
@@ -87,7 +81,7 @@ router.post('/seed', async (req, res)=>{
             age: 35,
             chassis: "Ferrari 500",
             motor: "Ferrari",
-            constructor: "Ferrari",
+            team: "Ferrari",
             tyres: "Pirelli",
             poles: 3,
             wins: 5,
@@ -103,7 +97,7 @@ router.post('/seed', async (req, res)=>{
             age: 43,
             chassis: "Maserati 250F / Mercedes W196",
             motor: "Maserati / Mercedes",
-            constructor: "Mercedes-Benz",
+            team: "Mercedes-Benz",
             tyres: "Continental",
             poles: 6,
             wins: 6,
@@ -119,7 +113,7 @@ router.post('/seed', async (req, res)=>{
             age: 44,
             chassis: "Mercedes W196",
             motor: "Mercedes",
-            constructor: "Mercedes-Benz",
+            team: "Mercedes-Benz",
             tyres: "Continental",
             poles: 4,
             wins: 4,
@@ -135,7 +129,7 @@ router.post('/seed', async (req, res)=>{
             age: 45,
             chassis: "Ferrari D50",
             motor: "Ferrari",
-            constructor: "Ferrari",
+            team: "Ferrari",
             tyres: "Englebert",
             poles: 5,
             wins: 3,
@@ -151,7 +145,7 @@ router.post('/seed', async (req, res)=>{
             age: 46,
             chassis: "Maserati 250F",
             motor: "Maserati",
-            constructor: "Maserati",
+            team: "Maserati",
             tyres: "Englebert",
             poles: 4,
             wins: 4,
@@ -167,7 +161,7 @@ router.post('/seed', async (req, res)=>{
             age: 29,
             chassis: "Ferrari 246",
             motor: "Ferrari",
-            constructor: "Ferrari",
+            team: "Ferrari",
             tyres: "Englebert",
             poles: 3,
             wins: 1,
@@ -183,7 +177,7 @@ router.post('/seed', async (req, res)=>{
             age: 33,
             chassis: "Cooper T51",
             motor: "Climax",
-            constructor: "Cooper-Climax",
+            team: "Cooper-Climax",
             tyres: "Dunlop",
             poles: 2,
             wins: 2,
@@ -199,7 +193,7 @@ router.post('/seed', async (req, res)=>{
             age: 34,
             chassis: "Cooper T53",
             motor: "Climax",
-            constructor: "Cooper-Climax",
+            team: "Cooper-Climax",
             tyres: "Dunlop",
             poles: 5,
             wins: 5,
@@ -215,7 +209,7 @@ router.post('/seed', async (req, res)=>{
             age: 34,
             chassis: "Ferrari 156",
             motor: "Ferrari",
-            constructor: "Ferrari",
+            team: "Ferrari",
             tyres: "Dunlop",
             poles: 5,
             wins: 2,
@@ -231,7 +225,7 @@ router.post('/seed', async (req, res)=>{
             age: 33,
             chassis: "BRM P57",
             motor: "BRM",
-            constructor: "BRM",
+            team: "BRM",
             tyres: "Dunlop",
             poles: 5,
             wins: 4,
@@ -247,7 +241,7 @@ router.post('/seed', async (req, res)=>{
             age: 27,
             chassis: "Lotus 25",
             motor: "Climax",
-            constructor: "Lotus-Climax",
+            team: "Lotus-Climax",
             tyres: "Dunlop",
             poles: 7,
             wins: 7,
@@ -263,7 +257,7 @@ router.post('/seed', async (req, res)=>{
             age: 30,
             chassis: "Ferrari 158",
             motor: "Ferrari",
-            constructor: "Ferrari",
+            team: "Ferrari",
             tyres: "Dunlop",
             poles: 3,
             wins: 2,
@@ -279,7 +273,7 @@ router.post('/seed', async (req, res)=>{
             age: 29,
             chassis: "Lotus 33",
             motor: "Climax",
-            constructor: "Lotus-Climax",
+            team: "Lotus-Climax",
             tyres: "Dunlop",
             poles: 6,
             wins: 6,
@@ -295,7 +289,7 @@ router.post('/seed', async (req, res)=>{
             age: 40,
             chassis: "Brabham BT19",
             motor: "Repco",
-            constructor: "Brabham-Repco",
+            team: "Brabham-Repco",
             tyres: "Goodyear",
             poles: 2,
             wins: 4,
@@ -311,7 +305,7 @@ router.post('/seed', async (req, res)=>{
             age: 31,
             chassis: "Brabham BT24",
             motor: "Repco",
-            constructor: "Brabham-Repco",
+            team: "Brabham-Repco",
             tyres: "Goodyear",
             poles: 1,
             wins: 2,
@@ -327,7 +321,7 @@ router.post('/seed', async (req, res)=>{
             age: 39,
             chassis: "Lotus 49B",
             motor: "Ford Cosworth",
-            constructor: "Lotus-Ford",
+            team: "Lotus-Ford",
             tyres: "Firestone",
             poles: 2,
             wins: 3,
@@ -343,7 +337,7 @@ router.post('/seed', async (req, res)=>{
             age: 30,
             chassis: "Matra MS80",
             motor: "Ford Cosworth",
-            constructor: "Matra-Ford",
+            team: "Matra-Ford",
             tyres: "Dunlop",
             poles: 4,
             wins: 6,
@@ -359,7 +353,7 @@ router.post('/seed', async (req, res)=>{
             age: 28,
             chassis: "Lotus 72",
             motor: "Ford Cosworth",
-            constructor: "Lotus-Ford",
+            team: "Lotus-Ford",
             tyres: "Firestone",
             poles: 3,
             wins: 5,
@@ -375,7 +369,7 @@ router.post('/seed', async (req, res)=>{
             age: 32,
             chassis: "Tyrrell 003",
             motor: "Ford Cosworth",
-            constructor: "Tyrrell-Ford",
+            team: "Tyrrell-Ford",
             tyres: "Goodyear",
             poles: 6,
             wins: 6,
@@ -391,7 +385,7 @@ router.post('/seed', async (req, res)=>{
             age: 25,
             chassis: "Lotus 72D",
             motor: "Ford Cosworth",
-            constructor: "Lotus-Ford",
+            team: "Lotus-Ford",
             tyres: "Goodyear",
             poles: 6,
             wins: 5,
@@ -407,7 +401,7 @@ router.post('/seed', async (req, res)=>{
             age: 34,
             chassis: "Tyrrell 006",
             motor: "Ford Cosworth",
-            constructor: "Tyrrell-Ford",
+            team: "Tyrrell-Ford",
             tyres: "Goodyear",
             poles: 5,
             wins: 5,
@@ -423,7 +417,7 @@ router.post('/seed', async (req, res)=>{
             age: 27,
             chassis: "McLaren M23",
             motor: "Ford Cosworth",
-            constructor: "McLaren-Ford",
+            team: "McLaren-Ford",
             tyres: "Goodyear",
             poles: 2,
             wins: 3,
@@ -439,7 +433,7 @@ router.post('/seed', async (req, res)=>{
             age: 26,
             chassis: "Ferrari 312T",
             motor: "Ferrari",
-            constructor: "Ferrari",
+            team: "Ferrari",
             tyres: "Goodyear",
             poles: 9,
             wins: 5,
@@ -455,7 +449,7 @@ router.post('/seed', async (req, res)=>{
             age: 29,
             chassis: "McLaren M23",
             motor: "Ford Cosworth",
-            constructor: "McLaren-Ford",
+            team: "McLaren-Ford",
             tyres: "Goodyear",
             poles: 8,
             wins: 6,
@@ -471,7 +465,7 @@ router.post('/seed', async (req, res)=>{
             age: 28,
             chassis: "Ferrari 312T2",
             motor: "Ferrari",
-            constructor: "Ferrari",
+            team: "Ferrari",
             tyres: "Goodyear",
             poles: 4,
             wins: 3,
@@ -487,7 +481,7 @@ router.post('/seed', async (req, res)=>{
             age: 38,
             chassis: "Lotus 79",
             motor: "Ford Cosworth",
-            constructor: "Lotus-Ford",
+            team: "Lotus-Ford",
             tyres: "Goodyear",
             poles: 8,
             wins: 6,
@@ -503,7 +497,7 @@ router.post('/seed', async (req, res)=>{
             age: 29,
             chassis: "Ferrari 312T4",
             motor: "Ferrari",
-            constructor: "Ferrari",
+            team: "Ferrari",
             tyres: "Michelin",
             poles: 3,
             wins: 3,
@@ -519,7 +513,7 @@ router.post('/seed', async (req, res)=>{
             age: 34,
             chassis: "Williams FW07B",
             motor: "Ford Cosworth",
-            constructor: "Williams-Ford",
+            team: "Williams-Ford",
             tyres: "Goodyear",
             poles: 1,
             wins: 5,
@@ -535,7 +529,7 @@ router.post('/seed', async (req, res)=>{
             age: 29,
             chassis: "Brabham BT49C",
             motor: "Ford Cosworth",
-            constructor: "Brabham-Ford",
+            team: "Brabham-Ford",
             tyres: "Goodyear",
             poles: 3,
             wins: 3,
@@ -551,7 +545,7 @@ router.post('/seed', async (req, res)=>{
             age: 33,
             chassis: "Williams FW08",
             motor: "Ford Cosworth",
-            constructor: "Williams-Ford",
+            team: "Williams-Ford",
             tyres: "Goodyear",
             poles: 1,
             wins: 1,
@@ -567,7 +561,7 @@ router.post('/seed', async (req, res)=>{
             age: 31,
             chassis: "Brabham BT52",
             motor: "BMW",
-            constructor: "Brabham-BMW",
+            team: "Brabham-BMW",
             tyres: "Michelin",
             poles: 3,
             wins: 3,
@@ -583,7 +577,7 @@ router.post('/seed', async (req, res)=>{
             age: 35,
             chassis: "McLaren MP4/2",
             motor: "TAG Porsche",
-            constructor: "McLaren-TAG",
+            team: "McLaren-TAG",
             tyres: "Michelin",
             poles: 0,
             wins: 5,
@@ -599,7 +593,7 @@ router.post('/seed', async (req, res)=>{
             age: 30,
             chassis: "McLaren MP4/2B",
             motor: "TAG Porsche",
-            constructor: "McLaren-TAG",
+            team: "McLaren-TAG",
             tyres: "Michelin",
             poles: 3,
             wins: 5,
@@ -615,7 +609,7 @@ router.post('/seed', async (req, res)=>{
             age: 31,
             chassis: "McLaren MP4/2C",
             motor: "TAG Porsche",
-            constructor: "McLaren-TAG",
+            team: "McLaren-TAG",
             tyres: "Goodyear",
             poles: 2,
             wins: 4,
@@ -631,7 +625,7 @@ router.post('/seed', async (req, res)=>{
             age: 35,
             chassis: "Williams FW11B",
             motor: "Honda",
-            constructor: "Williams-Honda",
+            team: "Williams-Honda",
             tyres: "Goodyear",
             poles: 4,
             wins: 3,
@@ -647,7 +641,7 @@ router.post('/seed', async (req, res)=>{
             age: 28,
             chassis: "McLaren MP4/4",
             motor: "Honda",
-            constructor: "McLaren-Honda",
+            team: "McLaren-Honda",
             tyres: "Goodyear",
             poles: 13,
             wins: 8,
@@ -663,7 +657,7 @@ router.post('/seed', async (req, res)=>{
             age: 34,
             chassis: "McLaren MP4/5",
             motor: "Honda",
-            constructor: "McLaren-Honda",
+            team: "McLaren-Honda",
             tyres: "Goodyear",
             poles: 2,
             wins: 4,
@@ -679,7 +673,7 @@ router.post('/seed', async (req, res)=>{
             age: 30,
             chassis: "McLaren MP4/5B",
             motor: "Honda",
-            constructor: "McLaren-Honda",
+            team: "McLaren-Honda",
             tyres: "Goodyear",
             poles: 10,
             wins: 6,
@@ -695,7 +689,7 @@ router.post('/seed', async (req, res)=>{
             age: 31,
             chassis: "McLaren MP4/6",
             motor: "Honda",
-            constructor: "McLaren-Honda",
+            team: "McLaren-Honda",
             tyres: "Goodyear",
             poles: 6,
             wins: 7,
@@ -711,7 +705,7 @@ router.post('/seed', async (req, res)=>{
             age: 39,
             chassis: "Williams FW14B",
             motor: "Renault",
-            constructor: "Williams-Renault",
+            team: "Williams-Renault",
             tyres: "Goodyear",
             poles: 14,
             wins: 9,
@@ -727,7 +721,7 @@ router.post('/seed', async (req, res)=>{
             age: 38,
             chassis: "Williams FW15C",
             motor: "Renault",
-            constructor: "Williams-Renault",
+            team: "Williams-Renault",
             tyres: "Goodyear",
             poles: 13,
             wins: 7,
@@ -743,7 +737,7 @@ router.post('/seed', async (req, res)=>{
             age: 25,
             chassis: "Benetton B194",
             motor: "Ford",
-            constructor: "Benetton-Ford",
+            team: "Benetton-Ford",
             tyres: "Goodyear",
             poles: 6,
             wins: 8,
@@ -759,7 +753,7 @@ router.post('/seed', async (req, res)=>{
             age: 26,
             chassis: "Benetton B195",
             motor: "Renault",
-            constructor: "Benetton-Renault",
+            team: "Benetton-Renault",
             tyres: "Goodyear",
             poles: 4,
             wins: 9,
@@ -775,7 +769,7 @@ router.post('/seed', async (req, res)=>{
             age: 36,
             chassis: "Williams FW18",
             motor: "Renault",
-            constructor: "Williams-Renault",
+            team: "Williams-Renault",
             tyres: "Goodyear",
             poles: 9,
             wins: 8,
@@ -791,7 +785,7 @@ router.post('/seed', async (req, res)=>{
             age: 26,
             chassis: "Williams FW19",
             motor: "Renault",
-            constructor: "Williams-Renault",
+            team: "Williams-Renault",
             tyres: "Goodyear",
             poles: 10,
             wins: 7,
@@ -807,7 +801,7 @@ router.post('/seed', async (req, res)=>{
             age: 29,
             chassis: "McLaren MP4/13",
             motor: "Mercedes",
-            constructor: "McLaren-Mercedes",
+            team: "McLaren-Mercedes",
             tyres: "Bridgestone",
             poles: 9,
             wins: 8,
@@ -823,7 +817,7 @@ router.post('/seed', async (req, res)=>{
             age: 30,
             chassis: "McLaren MP4/14",
             motor: "Mercedes",
-            constructor: "McLaren-Mercedes",
+            team: "McLaren-Mercedes",
             tyres: "Bridgestone",
             poles: 11,
             wins: 5,
@@ -839,7 +833,7 @@ router.post('/seed', async (req, res)=>{
             age: 31,
             chassis: "Ferrari F1-2000",
             motor: "Ferrari",
-            constructor: "Ferrari",
+            team: "Ferrari",
             tyres: "Bridgestone",
             poles: 9,
             wins: 9,
@@ -855,7 +849,7 @@ router.post('/seed', async (req, res)=>{
             age: 32,
             chassis: "Ferrari F2001",
             motor: "Ferrari",
-            constructor: "Ferrari",
+            team: "Ferrari",
             tyres: "Bridgestone",
             poles: 11,
             wins: 9,
@@ -871,7 +865,7 @@ router.post('/seed', async (req, res)=>{
             age: 33,
             chassis: "Ferrari F2002",
             motor: "Ferrari",
-            constructor: "Ferrari",
+            team: "Ferrari",
             tyres: "Bridgestone",
             poles: 7,
             wins: 11,
@@ -887,7 +881,7 @@ router.post('/seed', async (req, res)=>{
             age: 34,
             chassis: "Ferrari F2003-GA",
             motor: "Ferrari",
-            constructor: "Ferrari",
+            team: "Ferrari",
             tyres: "Bridgestone",
             poles: 5,
             wins: 6,
@@ -903,7 +897,7 @@ router.post('/seed', async (req, res)=>{
             age: 35,
             chassis: "Ferrari F2004",
             motor: "Ferrari",
-            constructor: "Ferrari",
+            team: "Ferrari",
             tyres: "Bridgestone",
             poles: 8,
             wins: 13,
@@ -919,7 +913,7 @@ router.post('/seed', async (req, res)=>{
             age: 24,
             chassis: "Renault R25",
             motor: "Renault",
-            constructor: "Renault",
+            team: "Renault",
             tyres: "Michelin",
             poles: 6,
             wins: 7,
@@ -935,7 +929,7 @@ router.post('/seed', async (req, res)=>{
             age: 25,
             chassis: "Renault R26",
             motor: "Renault",
-            constructor: "Renault",
+            team: "Renault",
             tyres: "Michelin",
             poles: 6,
             wins: 7,
@@ -951,7 +945,7 @@ router.post('/seed', async (req, res)=>{
             age: 28,
             chassis: "Ferrari F2007",
             motor: "Ferrari",
-            constructor: "Ferrari",
+            team: "Ferrari",
             tyres: "Bridgestone",
             poles: 3,
             wins: 6,
@@ -967,7 +961,7 @@ router.post('/seed', async (req, res)=>{
             age: 23,
             chassis: "McLaren MP4-23",
             motor: "Mercedes",
-            constructor: "McLaren-Mercedes",
+            team: "McLaren-Mercedes",
             tyres: "Bridgestone",
             poles: 7,
             wins: 5,
@@ -983,7 +977,7 @@ router.post('/seed', async (req, res)=>{
             age: 29,
             chassis: "Brawn BGP 001",
             motor: "Mercedes",
-            constructor: "Brawn-Mercedes",
+            team: "Brawn-Mercedes",
             tyres: "Bridgestone",
             poles: 4,
             wins: 6,
@@ -999,7 +993,7 @@ router.post('/seed', async (req, res)=>{
             age: 23,
             chassis: "Red Bull RB6",
             motor: "Renault",
-            constructor: "Red Bull-Renault",
+            team: "Red Bull-Renault",
             tyres: "Bridgestone",
             poles: 10,
             wins: 5,
@@ -1015,7 +1009,7 @@ router.post('/seed', async (req, res)=>{
             age: 24,
             chassis: "Red Bull RB7",
             motor: "Renault",
-            constructor: "Red Bull-Renault",
+            team: "Red Bull-Renault",
             tyres: "Pirelli",
             poles: 15,
             wins: 11,
@@ -1031,7 +1025,7 @@ router.post('/seed', async (req, res)=>{
             age: 25,
             chassis: "Red Bull RB8",
             motor: "Renault",
-            constructor: "Red Bull-Renault",
+            team: "Red Bull-Renault",
             tyres: "Pirelli",
             poles: 6,
             wins: 5,
@@ -1047,7 +1041,7 @@ router.post('/seed', async (req, res)=>{
             age: 26,
             chassis: "Red Bull RB9",
             motor: "Renault",
-            constructor: "Red Bull-Renault",
+            team: "Red Bull-Renault",
             tyres: "Pirelli",
             poles: 9,
             wins: 13,
@@ -1063,7 +1057,7 @@ router.post('/seed', async (req, res)=>{
             age: 29,
             chassis: "Mercedes W05",
             motor: "Mercedes",
-            constructor: "Mercedes",
+            team: "Mercedes",
             tyres: "Pirelli",
             poles: 7,
             wins: 11,
@@ -1079,7 +1073,7 @@ router.post('/seed', async (req, res)=>{
             age: 30,
             chassis: "Mercedes W06",
             motor: "Mercedes",
-            constructor: "Mercedes",
+            team: "Mercedes",
             tyres: "Pirelli",
             poles: 11,
             wins: 10,
@@ -1095,7 +1089,7 @@ router.post('/seed', async (req, res)=>{
             age: 31,
             chassis: "Mercedes W07",
             motor: "Mercedes",
-            constructor: "Mercedes",
+            team: "Mercedes",
             tyres: "Pirelli",
             poles: 8,
             wins: 9,
@@ -1111,7 +1105,7 @@ router.post('/seed', async (req, res)=>{
             age: 32,
             chassis: "Mercedes W08",
             motor: "Mercedes",
-            constructor: "Mercedes",
+            team: "Mercedes",
             tyres: "Pirelli",
             poles: 11,
             wins: 9,
@@ -1127,7 +1121,7 @@ router.post('/seed', async (req, res)=>{
             age: 33,
             chassis: "Mercedes W09",
             motor: "Mercedes",
-            constructor: "Mercedes",
+            team: "Mercedes",
             tyres: "Pirelli",
             poles: 11,
             wins: 11,
@@ -1143,7 +1137,7 @@ router.post('/seed', async (req, res)=>{
             age: 34,
             chassis: "Mercedes W10",
             motor: "Mercedes",
-            constructor: "Mercedes",
+            team: "Mercedes",
             tyres: "Pirelli",
             poles: 5,
             wins: 11,
@@ -1159,7 +1153,7 @@ router.post('/seed', async (req, res)=>{
             age: 34,
             chassis: "Mercedes W10",
             motor: "Mercedes",
-            constructor: "Mercedes",
+            team: "Mercedes",
             tyres: "Pirelli",
             poles: 5,
             wins: 11,
@@ -1175,7 +1169,7 @@ router.post('/seed', async (req, res)=>{
             age: 35,
             chassis: "Mercedes W11",
             motor: "Mercedes",
-            constructor: "Mercedes",
+            team: "Mercedes",
             tyres: "Pirelli",
             poles: 10,
             wins: 11,
@@ -1191,7 +1185,7 @@ router.post('/seed', async (req, res)=>{
             age: 24,
             chassis: "Red Bull RB16B",
             motor: "Honda",
-            constructor: "Red Bull-Honda",
+            team: "Red Bull-Honda",
             tyres: "Pirelli",
             poles: 10,
             wins: 10,
@@ -1207,7 +1201,7 @@ router.post('/seed', async (req, res)=>{
             age: 25,
             chassis: "Red Bull RB18",
             motor: "Red Bull Powertrains",
-            constructor: "Red Bull Racing",
+            team: "Red Bull Racing",
             tyres: "Pirelli",
             poles: 7,
             wins: 15,
@@ -1223,7 +1217,7 @@ router.post('/seed', async (req, res)=>{
             age: 26,
             chassis: "Red Bull RB19",
             motor: "Red Bull Powertrains",
-            constructor: "Red Bull Racing",
+            team: "Red Bull Racing",
             tyres: "Pirelli",
             poles: 11,
             wins: 19,
@@ -1239,7 +1233,7 @@ router.post('/seed', async (req, res)=>{
             age: 27,
             chassis: "Red Bull RB20",
             motor: "Red Bull Powertrains",
-            constructor: "Red Bull Racing",
+            team: "Red Bull Racing",
             tyres: "Pirelli",
             poles: 9,
             wins: 12,
@@ -1249,38 +1243,227 @@ router.post('/seed', async (req, res)=>{
             fastestLaps: 5,
             number: 1,
         },
-    ]
+    ];
+    const seedAmount = req.body.amount;
+    const method = req.body.method;
+    console.log(req.body)
 
-})
+    if (method === "SEED") {
+        try {
+            const reset = req.body.clean;
+            if (reset === true) {
+                await Champion.deleteMany({});
+                console.log("Database has been cleared")
+            } else {
+                console.log("Databse is niet geleegd")
+            }
+            for (let i = 0; i < seedAmount; i++) {
+                const {
+                    year,
+                    name,
+                    age,
+                    chassis,
+                    motor,
+                    team,
+                    tyres,
+                    poles,
+                    wins,
+                    podiums,
+                    points,
+                    pointsClear,
+                    fastestLaps,
+                    number,
+                } = f1ChampionsDetailed[i];
+                const yearStr = String(year);
+                const nameStr = String(name);
+                const ageStr = String(age);
+                const chassisStr = String(chassis);
+                const motorStr = String(motor);
+                const teamStr = String(team);
+                const tyresStr = String(tyres);
+                const polesStr = String(poles);
+                const winsStr = String(wins);
+                const podiumsStr = String(podiums);
+                const pointsStr = String(points);
+                const pointsClearStr = String(pointsClear);
+                const fastestLapsStr = String(fastestLaps);
+                const numberStr = String(number);
+                await Champion.create({
+                    year: yearStr,
+                    name: nameStr,
+                    age: ageStr,
+                    chassis: chassisStr,
+                    motor: motorStr,
+                    team: teamStr,
+                    tyres: tyresStr,
+                    poles: polesStr,
+                    wins: winsStr,
+                    podiums: podiumsStr,
+                    points: pointsStr,
+                    pointsClear: pointsClearStr,
+                    fastestLaps: fastestLapsStr,
+                    number: numberStr,
+                })
+            }
+            res.status(201).json({message: "Champions seeded successfully"});
 
-router.post('/:year', async (req, res) => {
-    try {
-
-    } catch (error) {
-
+        } catch (error) {
+            res.status(500).json({error: error.message})
+        }
+    } else {
+        const {
+            year,
+            name,
+            age,
+            chassis,
+            motor,
+            team,
+            tyres,
+            poles,
+            wins,
+            podiums,
+            points,
+            pointsClear,
+            fastestLaps,
+            number
+        } = req.body;
+        if (!year || !name || !age || !chassis || !motor || !team || !tyres || !poles || !wins || !podiums || !points || !pointsClear || !fastestLaps || !number) {
+            return res.status(400).json({message: "Velden zijn leeg"})
+        }
+        try {
+            const yearStr = String(year);
+            const nameStr = String(name);
+            const ageStr = String(age);
+            const chassisStr = String(chassis);
+            const motorStr = String(motor);
+            const teamStr = String(team);
+            const tyresStr = String(tyres);
+            const polesStr = String(poles);
+            const winsStr = String(wins);
+            const podiumsStr = String(podiums);
+            const pointsStr = String(points);
+            const pointsClearStr = String(pointsClear);
+            const fastestLapsStr = String(fastestLaps);
+            const numberStr = String(number);
+            const addChampions = await Champion.create(
+                {
+                    year: yearStr,
+                    name: nameStr,
+                    age: ageStr,
+                    chassis: chassisStr,
+                    motor: motorStr,
+                    team: teamStr,
+                    tyres: tyresStr,
+                    poles: polesStr,
+                    wins: winsStr,
+                    podiums: podiumsStr,
+                    points: pointsStr,
+                    pointsClear: pointsClearStr,
+                    fastestLaps: fastestLapsStr,
+                    number: numberStr,
+                }
+            )
+            console.log("body="+ JSON.stringify(req.body, null, 4))
+            console.log("createChampion="+ addChampions)
+            res.status(201).json(addChampions + {message: "Champion created"})
+        } catch
+            (error) {
+            console.error(error);
+            res.status(500).json({error: error.message});
+        }
     }
+
 });
 
-router.post('/:year', async (req, res) => {
-    try {
-
-    } catch (error) {
-
-    }
-});
-
-router.post('/:year', async (req, res) => {
-    try {
-
-    } catch (error) {
-
-    }
-});
-router.options('/:year', async (req, res) => {
-    res.setHeader('Allow', 'GET, PUT, DELETE');
-    res.header('Access-Control-Allow-Methods', 'GET, PUT, DELETE');
+router.options('/', async (req, res) => {
+    res.setHeader('Allow', 'GET, POST, OPTIONS');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
 
     res.send();
 });
+
+router.get('/:id', async (req, res) => {
+    console.log(req.params.id)
+    try {
+        const seasonYear = req.params.id;
+        const champion = await Champion.findById(seasonYear);
+        if (!champion) {
+            return res.status(404).json({message: "This driver is no champion"})
+        }
+        res.status(200).json(champion)
+    } catch (error) {
+        res.status(404).json({error: error.message})
+    }
+});
+
+router.put('/:id', async (req, res) => {
+    try {
+        const championId = req.params.id;
+        const {year, name, age, chassis, motor, team, tyres, poles, wins, podiums, points, pointsClear, fastestLaps, number
+        } = req.body;
+        if (!year || !name || !age || !chassis || !motor || !team || !tyres || !poles || !wins || !podiums || !points || !pointsClear || !fastestLaps || !number) {
+            return res.status(400).json({ message: "All fields are required" });
+        }
+        const yearStr =String(year);
+        const nameStr = String(name);
+        const ageStr = String(age);
+        const chassisStr = String(chassis);
+        const motorStr = String(motor);
+        const teamStr = String(team);
+        const tyresStr = String(tyres);
+        const polesStr = String(poles);
+        const winsStr = String(wins);
+        const podiumsStr = String(podiums);
+        const pointsStr = String(points);
+        const pointsClearStr =String(pointsClear);
+        const fastestLapsStr = String(fastestLaps);
+        const numberStr = String(number);
+        await inputChecker(championId, res, req, yearStr, nameStr, ageStr, chassisStr, motorStr, teamStr, tyresStr, polesStr, winsStr, podiumsStr, pointsStr, pointsClearStr, fastestLapsStr, numberStr)
+    } catch (error) {
+        res.status(400).json({error: error.message})
+    }
+});
+
+router.delete('/:id', async (req, res) => {
+    try {
+        const championId = req.params.id;
+        await Champion.findByIdAndDelete(championId);
+        res.status(204).json("Champion deleted")
+    } catch (error) {
+        req.status(400).json({error: error.message})
+    }
+});
+
+router.options('/:id', async (req, res) => {
+    res.setHeader('Allow', 'GET,PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Methods', 'GET, PUT, DELETE, OPTIONS');
+
+    res.send();
+});
+
+
+async function inputChecker(championId, res, req, year, name, age, chassis, motor, team, tyres, poles, wins, podiums, points, pointsClear, fastestLaps, number) {
+    const updateChampionInfo = await Champion.findByIdAndUpdate(
+        championId, {
+            year,
+            name,
+            age,
+            chassis,
+            motor,
+            team,
+            tyres,
+            poles,
+            wins,
+            podiums,
+            points,
+            pointsClear,
+            fastestLaps,
+            number,
+        }, {new: true, runValidators: true}
+    );
+    if (!updateChampionInfo) {
+        res.status(404).json({error: "This driver is No champion!"})
+    }
+    res.status(201).json({message: "Champion updated", data: updateChampionInfo})}
 
 export default router

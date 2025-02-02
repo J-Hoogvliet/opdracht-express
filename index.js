@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import champions from "./Routes/Champions.js";
+import router from "./Routes/Champions.js";
 
 const app = express();
 
@@ -14,6 +15,9 @@ app.use( (req, res, next)=>{
     }
     next()
 });
+
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 
 mongoose.connect('mongodb://127.0.0.1:27017/F1Champions')
     .then(() => {
